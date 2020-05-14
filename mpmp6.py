@@ -59,7 +59,7 @@ def find_deposits(total):
   """Find the minimum deposit amounts to eventually reach a certain balance.
 
   Args:
-    total: The total to eventually reach.
+    total: The target balance to eventually reach.
   Returns:
     (a, b, n) where a and b are the day 1 and day 2 deposits (respectively)
     and n is the number of days it will take to reach the total.
@@ -67,24 +67,18 @@ def find_deposits(total):
   max_n = 0
   while fib(max_n) <= total:
     max_n += 1
-  # if fib(x) > total, then fib(x - 1) + fib(x - 2) > total
-  # so even if a and b are both 1, then on day x - 1 the balance would be too high
-  # so the maximum day would be x - 2
+  # If fib(x) > total, then fib(x - 1) + fib(x - 2) > total
+  # so even if a and b are both 1, then on day x - 1 the balance would be too
+  # high so the maximum day would be x - 2.
   max_n -= 2
 
   for n in range(max_n, 0, -1):
     for b in itertools.count(1):
-      if balance(1, b, n) > total:
+      a = (total - fib(n - 1) * b) / fib(n)
+      if int(a) == a:
+        return (int(a), b, n)
+      elif a < 1:
         break
-      for a in range(1, b + 1):
-        balance1 = balance(a, b, n)
-        balance2 = balance(b, a, n)
-        if balance1 == total:
-          return (a, b, n)
-        elif balance2 == total:
-          return (b, a, n)
-        elif balance1 > total:
-          break
   raise ValueError('Not possible')
 
 
